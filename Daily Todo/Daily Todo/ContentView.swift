@@ -9,19 +9,26 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var taskList = TaskList()
+    @State private var lastOpenedDate: Date?
+    
+    let mutedBlue = Color(red: 55/255, green: 71/255, blue: 79/255)
+    let mutedGreen = Color(red: 86/255, green: 139/255, blue: 125/255)
+    let mutedRed = Color(red: 151/255, green: 66/255, blue: 63/255)
+    let mutedYellow = Color(red: 180/255, green: 140/255, blue: 57/255)
     
     var body: some View {
         NavigationView {
             List {
                 ForEach(taskList.tasks) { task in
-                    HStack {
-                        Button(action: {
-                            taskList.toggleTask(task: task)
-                        }) {
+                    Button(action: {
+                        taskList.toggleTask(task: task)
+                    }) {
+                        HStack {
                             Image(systemName: task.completed ? "checkmark.square.fill" : "square")
+                                .foregroundColor(task.completed ? mutedGreen : mutedBlue)
+                            Text(task.name)
+                                .foregroundColor(task.completed ? .gray : .primary)
                         }
-                        .buttonStyle(BorderlessButtonStyle())
-                        Text(task.name)
                     }
                 }
                 .onDelete(perform: { indexSet in
@@ -33,6 +40,7 @@ struct ContentView: View {
                 ToolbarItem(placement: .primaryAction) {
                     NavigationLink(destination: AddTaskView(taskList: taskList)) {
                         Image(systemName: "plus")
+                            .foregroundColor(mutedBlue)
                     }
                 }
             }
@@ -58,8 +66,10 @@ struct ContentView: View {
                 taskList.resetTasks()
             }
         }
+        .accentColor(mutedGreen)
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
